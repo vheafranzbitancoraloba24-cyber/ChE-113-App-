@@ -1,0 +1,2871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ThermoPath - Thermodynamic Process Analyzer</title>
+
+    <link rel="stylesheet" href="style2.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div>
+            <h1>ThermoPath</h1>
+            <p>Thermodynamic Process Analyzer</p>
+        </div>
+
+        <div class="model-note">
+            Ideal Gas Model<br>
+            Constant Heat Capacities
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- INTRO -->
+        <section class="intro card">
+            <h2>Analyze a Thermodynamic Process</h2>
+
+            <p>
+                Enter the initial state of an ideal gas, select a thermodynamic
+                process, and provide one final-state condition. ThermoPath
+                calculates heat, work, internal energy, enthalpy, and the
+                corresponding P-V diagram.
+            </p>
+
+            <div class="sign-convention">
+                <strong>Sign Convention</strong>
+
+                <span>
+                    Q &gt; 0: Heat enters the system
+                </span>
+
+                <span>
+                    Q &lt; 0: Heat leaves the system
+                </span>
+
+                <span>
+                    W &gt; 0: Work is done by the gas
+                </span>
+
+                <span>
+                    W &lt; 0: Work is done on the gas
+                </span>
+            </div>
+        </section>
+
+
+        <!-- INPUT AREA -->
+        <section class="card">
+
+            <h2>1. Enter System Data</h2>
+
+            <div class="input-grid">
+
+                <div class="input-group">
+                    <label for="n">Amount of Gas, n</label>
+
+                    <div class="input-with-unit">
+                        <input
+                            type="number"
+                            id="n"
+                            value="1"
+                            min="0.000001"
+                            step="any"
+                        >
+
+                        <select id="nUnit">
+                            <option value="mol">mol</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="input-group">
+                    <label for="p1">Initial Pressure, P₁</label>
+
+                    <div class="input-with-unit">
+                        <input
+                            type="number"
+                            id="p1"
+                            value="8"
+                            min="0.000001"
+                            step="any"
+                        >
+
+                        <select id="pressureUnit">
+                            <option value="bar">bar</option>
+                            <option value="kPa">kPa</option>
+                            <option value="atm">atm</option>
+                            <option value="Pa">Pa</option>
+                            <option value="mmHg">mmHg</option>
+                            <option value="psi">psi</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="input-group">
+                    <label for="t1">Initial Temperature, T₁</label>
+
+                    <div class="input-with-unit">
+                        <input
+                            type="number"
+                            id="t1"
+                            value="600"
+                            min="0.000001"
+                            step="any"
+                        >
+
+                        <select id="temperatureUnit">
+                            <option value="K">K</option>
+                            <option value="C">°C</option>
+                            <option value="F">°F</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="input-group">
+                    <label for="cp">Heat Capacity, Cₚ</label>
+
+                    <div class="input-with-unit">
+                        <input
+                            type="number"
+                            id="cp"
+                            value="29.100"
+                            min="0.000001"
+                            step="any"
+                        >
+
+                        <select>
+                            <option value="J/mol-K">J/mol·K</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="input-group">
+                    <label for="cv">Heat Capacity, Cᵥ</label>
+
+                    <div class="input-with-unit">
+                        <input
+                            type="number"
+                            id="cv"
+                            value="20.786"
+                            min="0.000001"
+                            step="any"
+                        >
+
+                        <select>
+                            <option value="J/mol-K">J/mol·K</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="input-group">
+                    <label for="energyUnit">Energy Output</label>
+
+                    <select id="energyUnit" class="full-select">
+                        <option value="kJ">kJ</option>
+                        <option value="J">J</option>
+                    </select>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PROCESS SELECTION -->
+        <section class="card">
+
+            <h2>2. Select Thermodynamic Process</h2>
+
+            <div class="process-grid">
+
+                <button
+                    class="process-card active"
+                    data-process="isochoric"
+                    onclick="selectProcess('isochoric')"
+                >
+                    <span class="process-icon">│</span>
+
+                    <strong>Isochoric</strong>
+
+                    <small>
+                        Constant Volume
+                    </small>
+                </button>
+
+
+                <button
+                    class="process-card"
+                    data-process="isobaric"
+                    onclick="selectProcess('isobaric')"
+                >
+                    <span class="process-icon">━</span>
+
+                    <strong>Isobaric</strong>
+
+                    <small>
+                        Constant Pressure
+                    </small>
+                </button>
+
+
+                <button
+                    class="process-card"
+                    data-process="isothermal"
+                    onclick="selectProcess('isothermal')"
+                >
+                    <span class="process-icon">⌁</span>
+
+                    <strong>Isothermal</strong>
+
+                    <small>
+                        Constant Temperature
+                    </small>
+                </button>
+
+
+                <button
+                    class="process-card"
+                    data-process="adiabatic"
+                    onclick="selectProcess('adiabatic')"
+                >
+                    <span class="process-icon">⌁</span>
+
+                    <strong>Reversible Adiabatic</strong>
+
+                    <small>
+                        Q = 0
+                    </small>
+                </button>
+
+            </div>
+
+            <div class="process-description" id="processDescription">
+                Constant volume process:
+                V₁ = V₂ and W = 0.
+            </div>
+
+        </section>
+
+
+        <!-- FINAL STATE -->
+        <section class="card">
+
+            <h2>3. Final-State Condition</h2>
+
+            <div class="final-grid">
+
+                <div class="input-group">
+
+                    <label for="finalVariable">
+                        Specify Final Condition
+                    </label>
+
+                    <select
+                        id="finalVariable"
+                        onchange="updateFinalInput()"
+                    >
+                    </select>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="finalValue" id="finalValueLabel">
+                        Final Pressure, P₂
+                    </label>
+
+                    <div class="input-with-unit">
+
+                        <input
+                            type="number"
+                            id="finalValue"
+                            value="1"
+                            min="0.000001"
+                            step="any"
+                        >
+
+                        <span
+                            class="unit-display"
+                            id="finalUnit"
+                        >
+                            bar
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div
+                class="input-hint"
+                id="inputHint"
+            >
+                Enter the final pressure.
+            </div>
+
+            <button
+                class="calculate-btn"
+                onclick="calculateProcess()"
+            >
+                Calculate Process
+            </button>
+
+        </section>
+
+
+        <!-- ERROR -->
+        <div
+            class="error-box"
+            id="errorBox"
+        ></div>
+
+
+        <!-- RESULTS -->
+        <section
+            class="card results-section"
+            id="resultsSection"
+        >
+
+            <h2>4. Results</h2>
+
+            <div class="state-grid">
+
+                <div class="state-card">
+                    <h3>State 1</h3>
+
+                    <p>
+                        <strong>P₁</strong>
+                        <span id="p1Result">-</span>
+                    </p>
+
+                    <p>
+                        <strong>V₁</strong>
+                        <span id="v1Result">-</span>
+                    </p>
+
+                    <p>
+                        <strong>T₁</strong>
+                        <span id="t1Result">-</span>
+                    </p>
+                </div>
+
+
+                <div class="state-arrow">
+                    →
+                </div>
+
+
+                <div class="state-card">
+                    <h3>State 2</h3>
+
+                    <p>
+                        <strong>P₂</strong>
+                        <span id="p2Result">-</span>
+                    </p>
+
+                    <p>
+                        <strong>V₂</strong>
+                        <span id="v2Result">-</span>
+                    </p>
+
+                    <p>
+                        <strong>T₂</strong>
+                        <span id="t2Result">-</span>
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="process-status" id="processStatus">
+                -
+            </div>
+
+
+            <div class="results-grid">
+
+                <div class="result-box">
+                    <span>Heat, Q</span>
+                    <strong id="qResult">-</strong>
+                </div>
+
+                <div class="result-box">
+                    <span>Work, W</span>
+                    <strong id="wResult">-</strong>
+                </div>
+
+                <div class="result-box">
+                    <span>ΔU</span>
+                    <strong id="duResult">-</strong>
+                </div>
+
+                <div class="result-box">
+                    <span>ΔH</span>
+                    <strong id="dhResult">-</strong>
+                </div>
+
+            </div>
+
+
+            <!-- FIRST LAW -->
+            <div class="verification-box">
+
+                <h3>First Law Verification</h3>
+
+                <p>
+                    The First Law used is:
+                </p>
+
+                <div class="equation">
+                    ΔU = Q − W
+                </div>
+
+                <p id="firstLawResult">
+                    -
+                </p>
+
+            </div>
+
+
+            <!-- INTERPRETATION -->
+            <div class="interpretation-box">
+
+                <h3>Process Interpretation</h3>
+
+                <p id="interpretation">
+                    -
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- GRAPH -->
+        <section class="card graph-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>5. P-V Diagram</h2>
+
+                    <p>
+                        The curve shows the actual thermodynamic path
+                        from State 1 to State 2.
+                    </p>
+                </div>
+
+                <div class="legend">
+
+                    <span>
+                        <i class="legend-line process-line"></i>
+                        Process Path
+                    </span>
+
+                    <span>
+                        <i class="legend-dot state-dot"></i>
+                        States
+                    </span>
+
+                    <span>
+                        <i class="legend-area"></i>
+                        Work Area
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="chart-container">
+
+                <canvas id="pvChart"></canvas>
+
+            </div>
+
+        </section>
+
+
+        <!-- STEP SOLUTION -->
+        <section class="card">
+
+            <h2>6. Step-by-Step Solution</h2>
+
+            <div
+                class="solution"
+                id="solution"
+            >
+                Calculate the process to display the solution.
+            </div>
+
+        </section>
+
+
+        <!-- EQUATION GUIDE -->
+        <section class="card guide-section">
+
+            <h2>Process Equation Guide</h2>
+
+            <div class="guide-grid">
+
+                <div class="guide-card">
+
+                    <h3>Isochoric</h3>
+
+                    <p>
+                        V = constant
+                    </p>
+
+                    <p>
+                        W = 0
+                    </p>
+
+                    <p>
+                        ΔU = nCᵥΔT
+                    </p>
+
+                    <p>
+                        Q = ΔU
+                    </p>
+
+                </div>
+
+
+                <div class="guide-card">
+
+                    <h3>Isobaric</h3>
+
+                    <p>
+                        P = constant
+                    </p>
+
+                    <p>
+                        W = P(V₂ − V₁)
+                    </p>
+
+                    <p>
+                        ΔU = nCᵥΔT
+                    </p>
+
+                    <p>
+                        Q = ΔH = nCₚΔT
+                    </p>
+
+                </div>
+
+
+                <div class="guide-card">
+
+                    <h3>Isothermal</h3>
+
+                    <p>
+                        T = constant
+                    </p>
+
+                    <p>
+                        PV = constant
+                    </p>
+
+                    <p>
+                        ΔU = ΔH = 0
+                    </p>
+
+                    <p>
+                        W = nRT ln(V₂/V₁)
+                    </p>
+
+                    <p>
+                        Q = W
+                    </p>
+
+                </div>
+
+
+                <div class="guide-card">
+
+                    <h3>Reversible Adiabatic</h3>
+
+                    <p>
+                        Q = 0
+                    </p>
+
+                    <p>
+                        PV<sup>γ</sup> = constant
+                    </p>
+
+                    <p>
+                        TV<sup>γ−1</sup> = constant
+                    </p>
+
+                    <p>
+                        γ = Cₚ/Cᵥ
+                    </p>
+
+                    <p>
+                        W = −ΔU
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        <p>
+            ThermoPath | Thermodynamic Process Analyzer
+        </p>
+
+        <p>
+            Ideal gas with constant heat capacities
+        </p>
+    </footer>
+
+
+<script>
+
+"use strict";
+
+
+/* =========================================================
+   CONSTANTS
+========================================================= */
+
+const R = 8.314462618;
+
+
+/* =========================================================
+   GLOBAL VARIABLES
+========================================================= */
+
+let selectedProcess = "isochoric";
+let pvChart = null;
+
+
+/* =========================================================
+   UNIT CONVERSION
+========================================================= */
+
+function pressureToPa(value, unit) {
+
+    switch (unit) {
+
+        case "Pa":
+            return value;
+
+        case "kPa":
+            return value * 1000;
+
+        case "bar":
+            return value * 100000;
+
+        case "atm":
+            return value * 101325;
+
+        case "mmHg":
+            return value * 133.322368;
+
+        case "psi":
+            return value * 6894.757293;
+
+        default:
+            return value;
+    }
+}
+
+
+function paToPressure(value, unit) {
+
+    switch (unit) {
+
+        case "Pa":
+            return value;
+
+        case "kPa":
+            return value / 1000;
+
+        case "bar":
+            return value / 100000;
+
+        case "atm":
+            return value / 101325;
+
+        case "mmHg":
+            return value / 133.322368;
+
+        case "psi":
+            return value / 6894.757293;
+
+        default:
+            return value;
+    }
+}
+
+
+function temperatureToK(value, unit) {
+
+    switch (unit) {
+
+        case "K":
+            return value;
+
+        case "C":
+            return value + 273.15;
+
+        case "F":
+            return (value - 32) * 5 / 9 + 273.15;
+
+        default:
+            return value;
+    }
+}
+
+
+function kToTemperature(value, unit) {
+
+    switch (unit) {
+
+        case "K":
+            return value;
+
+        case "C":
+            return value - 273.15;
+
+        case "F":
+            return (value - 273.15) * 9 / 5 + 32;
+
+        default:
+            return value;
+    }
+}
+
+
+/* =========================================================
+   FORMATTING
+========================================================= */
+
+function formatNumber(value, digits = 5) {
+
+    if (!Number.isFinite(value)) {
+        return "-";
+    }
+
+    return Number(value).toLocaleString(
+        undefined,
+        {
+            maximumFractionDigits: digits
+        }
+    );
+}
+
+
+function formatSigned(value, unit, digits = 5) {
+
+    if (!Number.isFinite(value)) {
+        return "-";
+    }
+
+    const sign = value >= 0 ? "+" : "";
+
+    return `${sign}${formatNumber(value, digits)} ${unit}`;
+}
+
+
+function formatEnergy(value, unit) {
+
+    if (unit === "J") {
+
+        return formatSigned(value, "J");
+
+    }
+
+    return formatSigned(value / 1000, "kJ");
+}
+
+
+/* =========================================================
+   PROCESS SELECTION
+========================================================= */
+
+function selectProcess(process) {
+
+    selectedProcess = process;
+
+
+    document
+        .querySelectorAll(".process-card")
+        .forEach(card => {
+
+            card.classList.remove("active");
+
+            if (card.dataset.process === process) {
+                card.classList.add("active");
+            }
+
+        });
+
+
+    updateProcessDescription();
+
+    updateFinalOptions();
+
+    document.getElementById("resultsSection")
+        .style.display = "none";
+
+    document.getElementById("errorBox")
+        .style.display = "none";
+
+    drawEmptyChart();
+}
+
+
+function updateProcessDescription() {
+
+    const description =
+        document.getElementById("processDescription");
+
+
+    const descriptions = {
+
+        isochoric:
+            "Constant volume process: V₁ = V₂ and W = 0.",
+
+        isobaric:
+            "Constant pressure process: P₁ = P₂ and W = P(V₂ − V₁).",
+
+        isothermal:
+            "Constant temperature process: T₁ = T₂ and W = nRT ln(V₂/V₁).",
+
+        adiabatic:
+            "Reversible adiabatic process: Q = 0 and PVᵞ = constant."
+
+    };
+
+
+    description.textContent =
+        descriptions[selectedProcess];
+}
+
+
+/* =========================================================
+   FINAL INPUT OPTIONS
+========================================================= */
+
+function updateFinalOptions() {
+
+    const select =
+        document.getElementById("finalVariable");
+
+    select.innerHTML = "";
+
+
+    let options = [];
+
+
+    if (selectedProcess === "isochoric") {
+
+        options = [
+            ["P2", "Final Pressure, P₂"],
+            ["T2", "Final Temperature, T₂"]
+        ];
+
+    }
+
+
+    else if (selectedProcess === "isobaric") {
+
+        options = [
+            ["T2", "Final Temperature, T₂"],
+            ["V2", "Final Volume, V₂"]
+        ];
+
+    }
+
+
+    else if (selectedProcess === "isothermal") {
+
+        options = [
+            ["P2", "Final Pressure, P₂"],
+            ["V2", "Final Volume, V₂"]
+        ];
+
+    }
+
+
+    else if (selectedProcess === "adiabatic") {
+
+        options = [
+            ["P2", "Final Pressure, P₂"],
+            ["V2", "Final Volume, V₂"],
+            ["T2", "Final Temperature, T₂"]
+        ];
+
+    }
+
+
+    options.forEach(option => {
+
+        const element =
+            document.createElement("option");
+
+        element.value = option[0];
+
+        element.textContent = option[1];
+
+        select.appendChild(element);
+
+    });
+
+
+    updateFinalInput();
+
+}
+
+
+function updateFinalInput() {
+
+    const variable =
+        document.getElementById("finalVariable").value;
+
+    const label =
+        document.getElementById("finalValueLabel");
+
+    const unit =
+        document.getElementById("finalUnit");
+
+    const hint =
+        document.getElementById("inputHint");
+
+    const input =
+        document.getElementById("finalValue");
+
+
+    if (variable === "P2") {
+
+        label.textContent =
+            "Final Pressure, P₂";
+
+        unit.textContent =
+            document.getElementById("pressureUnit").value;
+
+        hint.textContent =
+            "Enter the final pressure.";
+
+        input.value =
+            selectedProcess === "isothermal"
+                ? "1"
+                : "1";
+
+    }
+
+
+    else if (variable === "V2") {
+
+        label.textContent =
+            "Final Volume, V₂";
+
+        unit.textContent =
+            "L";
+
+        hint.textContent =
+            "Enter the final volume in liters.";
+
+        input.value = "10";
+
+    }
+
+
+    else if (variable === "T2") {
+
+        label.textContent =
+            "Final Temperature, T₂";
+
+        unit.textContent =
+            document.getElementById("temperatureUnit").value;
+
+        hint.textContent =
+            "Enter the final temperature.";
+
+        input.value =
+            "300";
+
+    }
+
+}
+
+
+/* =========================================================
+   READ INPUTS
+========================================================= */
+
+function readInputs() {
+
+    const n =
+        parseFloat(
+            document.getElementById("n").value
+        );
+
+
+    const p1Input =
+        parseFloat(
+            document.getElementById("p1").value
+        );
+
+
+    const pressureUnit =
+        document.getElementById("pressureUnit").value;
+
+
+    const t1Input =
+        parseFloat(
+            document.getElementById("t1").value
+        );
+
+
+    const temperatureUnit =
+        document.getElementById("temperatureUnit").value;
+
+
+    const cp =
+        parseFloat(
+            document.getElementById("cp").value
+        );
+
+
+    const cv =
+        parseFloat(
+            document.getElementById("cv").value
+        );
+
+
+    const finalValue =
+        parseFloat(
+            document.getElementById("finalValue").value
+        );
+
+
+    const finalVariable =
+        document.getElementById("finalVariable").value;
+
+
+    const p1 =
+        pressureToPa(
+            p1Input,
+            pressureUnit
+        );
+
+
+    const t1 =
+        temperatureToK(
+            t1Input,
+            temperatureUnit
+        );
+
+
+    const gamma =
+        cp / cv;
+
+
+    const v1 =
+        n * R * t1 / p1;
+
+
+    return {
+
+        n,
+        p1,
+        p1Input,
+        pressureUnit,
+
+        t1,
+        t1Input,
+        temperatureUnit,
+
+        cp,
+        cv,
+        gamma,
+
+        v1,
+
+        finalVariable,
+        finalValue
+
+    };
+
+}
+
+
+/* =========================================================
+   VALIDATION
+========================================================= */
+
+function validateInputs(s) {
+
+    if (
+        !Number.isFinite(s.n) ||
+        s.n <= 0
+    ) {
+        return "Amount of gas must be greater than zero.";
+    }
+
+
+    if (
+        !Number.isFinite(s.p1) ||
+        s.p1 <= 0
+    ) {
+        return "Initial pressure must be greater than zero.";
+    }
+
+
+    if (
+        !Number.isFinite(s.t1) ||
+        s.t1 <= 0
+    ) {
+        return "Initial temperature must be above absolute zero.";
+    }
+
+
+    if (
+        !Number.isFinite(s.cp) ||
+        s.cp <= 0
+    ) {
+        return "Cₚ must be greater than zero.";
+    }
+
+
+    if (
+        !Number.isFinite(s.cv) ||
+        s.cv <= 0
+    ) {
+        return "Cᵥ must be greater than zero.";
+    }
+
+
+    if (s.cp <= s.cv) {
+
+        return "For this ideal-gas model, Cₚ should be greater than Cᵥ.";
+
+    }
+
+
+    if (
+        !Number.isFinite(s.finalValue) ||
+        s.finalValue <= 0
+    ) {
+        return "The final-state value must be greater than zero.";
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   CALCULATE PROCESS
+========================================================= */
+
+function calculateProcess() {
+
+    const errorBox =
+        document.getElementById("errorBox");
+
+
+    errorBox.style.display = "none";
+
+    errorBox.textContent = "";
+
+
+    let s;
+
+
+    try {
+
+        s = readInputs();
+
+    }
+
+    catch (error) {
+
+        showError(
+            "Please check all input values."
+        );
+
+        return;
+
+    }
+
+
+    const validation =
+        validateInputs(s);
+
+
+    if (validation) {
+
+        showError(validation);
+
+        return;
+
+    }
+
+
+    let p2;
+    let v2;
+    let t2;
+
+    let Q;
+    let W;
+    let dU;
+    let dH;
+
+
+    /* =====================================================
+       ISOCHORIC
+    ===================================================== */
+
+    if (selectedProcess === "isochoric") {
+
+        v2 = s.v1;
+
+
+        if (s.finalVariable === "P2") {
+
+            p2 =
+                pressureToPa(
+                    s.finalValue,
+                    s.pressureUnit
+                );
+
+            t2 =
+                p2 * v2 /
+                (s.n * R);
+
+        }
+
+
+        else {
+
+            t2 =
+                temperatureToK(
+                    s.finalValue,
+                    s.temperatureUnit
+                );
+
+            p2 =
+                s.n * R * t2 / v2;
+
+        }
+
+
+        W = 0;
+
+        dU =
+            s.n *
+            s.cv *
+            (t2 - s.t1);
+
+        dH =
+            s.n *
+            s.cp *
+            (t2 - s.t1);
+
+        Q = dU;
+
+    }
+
+
+    /* =====================================================
+       ISOBARIC
+    ===================================================== */
+
+    else if (selectedProcess === "isobaric") {
+
+        p2 = s.p1;
+
+
+        if (s.finalVariable === "T2") {
+
+            t2 =
+                temperatureToK(
+                    s.finalValue,
+                    s.temperatureUnit
+                );
+
+            v2 =
+                s.n * R * t2 / p2;
+
+        }
+
+
+        else {
+
+            v2 =
+                s.finalValue / 1000;
+
+            t2 =
+                p2 * v2 /
+                (s.n * R);
+
+        }
+
+
+        W =
+            p2 *
+            (v2 - s.v1);
+
+
+        dU =
+            s.n *
+            s.cv *
+            (t2 - s.t1);
+
+
+        dH =
+            s.n *
+            s.cp *
+            (t2 - s.t1);
+
+
+        Q =
+            dU + W;
+
+    }
+
+
+    /* =====================================================
+       ISOTHERMAL
+    ===================================================== */
+
+    else if (selectedProcess === "isothermal") {
+
+        t2 = s.t1;
+
+
+        if (s.finalVariable === "P2") {
+
+            p2 =
+                pressureToPa(
+                    s.finalValue,
+                    s.pressureUnit
+                );
+
+
+            v2 =
+                s.n * R * t2 / p2;
+
+        }
+
+
+        else {
+
+            v2 =
+                s.finalValue / 1000;
+
+
+            p2 =
+                s.n * R * t2 / v2;
+
+        }
+
+
+        /*
+            IMPORTANT:
+
+            W = nRT ln(V2/V1)
+
+            Expansion:
+            V2 > V1 → W > 0
+
+            Compression:
+            V2 < V1 → W < 0
+        */
+
+        W =
+            s.n *
+            R *
+            s.t1 *
+            Math.log(
+                v2 / s.v1
+            );
+
+
+        dU = 0;
+
+        dH = 0;
+
+        Q = W;
+
+    }
+
+
+    /* =====================================================
+       REVERSIBLE ADIABATIC
+    ===================================================== */
+
+    else if (selectedProcess === "adiabatic") {
+
+        const gamma =
+            s.gamma;
+
+
+        if (s.finalVariable === "P2") {
+
+            p2 =
+                pressureToPa(
+                    s.finalValue,
+                    s.pressureUnit
+                );
+
+
+            t2 =
+                s.t1 *
+                Math.pow(
+                    p2 / s.p1,
+                    (gamma - 1) / gamma
+                );
+
+
+            v2 =
+                s.n * R * t2 / p2;
+
+        }
+
+
+        else if (s.finalVariable === "V2") {
+
+            v2 =
+                s.finalValue / 1000;
+
+
+            t2 =
+                s.t1 *
+                Math.pow(
+                    s.v1 / v2,
+                    gamma - 1
+                );
+
+
+            p2 =
+                s.n * R * t2 / v2;
+
+        }
+
+
+        else {
+
+            t2 =
+                temperatureToK(
+                    s.finalValue,
+                    s.temperatureUnit
+                );
+
+
+            v2 =
+                s.v1 *
+                Math.pow(
+                    s.t1 / t2,
+                    1 / (gamma - 1)
+                );
+
+
+            p2 =
+                s.n * R * t2 / v2;
+
+        }
+
+
+        Q = 0;
+
+
+        dU =
+            s.n *
+            s.cv *
+            (t2 - s.t1);
+
+
+        dH =
+            s.n *
+            s.cp *
+            (t2 - s.t1);
+
+
+        W =
+            -dU;
+
+    }
+
+
+    else {
+
+        showError(
+            "Please select a thermodynamic process."
+        );
+
+        return;
+
+    }
+
+
+    const result = {
+
+        ...s,
+
+        p2,
+        v2,
+        t2,
+
+        Q,
+        W,
+        dU,
+        dH
+
+    };
+
+
+    displayResults(result);
+
+    drawPVChart(result);
+
+    generateSolution(result);
+
+}
+
+
+/* =========================================================
+   DISPLAY RESULTS
+========================================================= */
+
+function displayResults(r) {
+
+    const pressureUnit =
+        r.pressureUnit;
+
+    const temperatureUnit =
+        r.temperatureUnit;
+
+    const energyUnit =
+        document.getElementById("energyUnit").value;
+
+
+    document.getElementById("p1Result")
+        .textContent =
+        `${formatNumber(
+            paToPressure(r.p1, pressureUnit)
+        )} ${pressureUnit}`;
+
+
+    document.getElementById("v1Result")
+        .textContent =
+        `${formatNumber(r.v1 * 1000)} L`;
+
+
+    document.getElementById("t1Result")
+        .textContent =
+        `${formatNumber(
+            kToTemperature(
+                r.t1,
+                temperatureUnit
+            )
+        )} ${temperatureUnit}`;
+
+
+    document.getElementById("p2Result")
+        .textContent =
+        `${formatNumber(
+            paToPressure(
+                r.p2,
+                pressureUnit
+            )
+        )} ${pressureUnit}`;
+
+
+    document.getElementById("v2Result")
+        .textContent =
+        `${formatNumber(r.v2 * 1000)} L`;
+
+
+    document.getElementById("t2Result")
+        .textContent =
+        `${formatNumber(
+            kToTemperature(
+                r.t2,
+                temperatureUnit
+            )
+        )} ${temperatureUnit}`;
+
+
+    document.getElementById("qResult")
+        .textContent =
+        formatEnergy(r.Q, energyUnit);
+
+
+    document.getElementById("wResult")
+        .textContent =
+        formatEnergy(r.W, energyUnit);
+
+
+    document.getElementById("duResult")
+        .textContent =
+        formatEnergy(r.dU, energyUnit);
+
+
+    document.getElementById("dhResult")
+        .textContent =
+        formatEnergy(r.dH, energyUnit);
+
+
+    const direction =
+        r.v2 > r.v1
+            ? "Expansion"
+            : r.v2 < r.v1
+                ? "Compression"
+                : "No Change in Volume";
+
+
+    const status =
+        document.getElementById("processStatus");
+
+
+    status.textContent =
+        `${getProcessName()} | ${direction}`;
+
+
+    status.className =
+        "process-status";
+
+
+    if (direction === "Expansion") {
+
+        status.classList.add("expansion");
+
+    }
+
+    else if (direction === "Compression") {
+
+        status.classList.add("compression");
+
+    }
+
+    else {
+
+        status.classList.add("neutral");
+
+    }
+
+
+    /* FIRST LAW */
+
+    const calculatedDU =
+        r.Q - r.W;
+
+
+    const error =
+        Math.abs(
+            calculatedDU - r.dU
+        );
+
+
+    document.getElementById("firstLawResult")
+        .innerHTML =
+
+        `
+        ΔU = Q − W
+        <br><br>
+        ${formatEnergy(r.dU, energyUnit)}
+        =
+        ${formatEnergy(r.Q, energyUnit)}
+        −
+        ${formatEnergy(r.W, energyUnit)}
+        <br><br>
+        <strong>
+            Verification error:
+            ${formatEnergy(error, energyUnit)}
+        </strong>
+        `;
+
+
+    /* INTERPRETATION */
+
+    document.getElementById("interpretation")
+        .textContent =
+        getInterpretation(r);
+
+
+    document.getElementById("resultsSection")
+        .style.display = "block";
+
+}
+
+
+/* =========================================================
+   PROCESS NAME
+========================================================= */
+
+function getProcessName() {
+
+    const names = {
+
+        isochoric: "Isochoric Process",
+
+        isobaric: "Isobaric Process",
+
+        isothermal: "Isothermal Process",
+
+        adiabatic: "Reversible Adiabatic Process"
+
+    };
+
+
+    return names[selectedProcess];
+
+}
+
+
+/* =========================================================
+   INTERPRETATION
+========================================================= */
+
+function getInterpretation(r) {
+
+    let text = "";
+
+
+    if (selectedProcess === "isochoric") {
+
+        text =
+            "The volume remains constant, so no boundary work is done. " +
+            "The heat transferred is equal to the change in internal energy.";
+
+    }
+
+
+    else if (selectedProcess === "isobaric") {
+
+        text =
+            "The pressure remains constant. The change in volume produces " +
+            "boundary work, while the heat transfer is equal to the change in enthalpy.";
+
+    }
+
+
+    else if (selectedProcess === "isothermal") {
+
+        if (r.W > 0) {
+
+            text =
+                "The gas undergoes isothermal expansion. " +
+                "Because V₂ > V₁, the work done by the gas is positive. " +
+                "For an ideal gas, ΔU = 0, so the heat entering the system " +
+                "is equal to the work done by the gas.";
+
+        }
+
+        else if (r.W < 0) {
+
+            text =
+                "The gas undergoes isothermal compression. " +
+                "Because V₂ < V₁, the work is negative, meaning work is done " +
+                "on the gas. For an ideal gas, ΔU = 0, so Q = W and heat leaves the system.";
+
+        }
+
+        else {
+
+            text =
+                "There is no change in volume, so no work is done.";
+
+        }
+
+    }
+
+
+    else if (selectedProcess === "adiabatic") {
+
+        text =
+            "The process is reversible and adiabatic, so no heat is transferred. " +
+            "Any work done by the gas comes from its internal energy, which causes " +
+            "the temperature to change.";
+
+    }
+
+
+    return text;
+
+}
+
+
+/* =========================================================
+   ERROR DISPLAY
+========================================================= */
+
+function showError(message) {
+
+    const errorBox =
+        document.getElementById("errorBox");
+
+
+    errorBox.textContent =
+        message;
+
+
+    errorBox.style.display =
+        "block";
+
+
+    document.getElementById("resultsSection")
+        .style.display = "none";
+
+}
+
+
+/* =========================================================
+   P-V GRAPH
+========================================================= */
+
+function drawEmptyChart() {
+
+    const ctx =
+        document
+            .getElementById("pvChart")
+            .getContext("2d");
+
+
+    if (pvChart) {
+
+        pvChart.destroy();
+
+    }
+
+
+    pvChart =
+        new Chart(
+            ctx,
+            {
+
+                type: "line",
+
+                data: {
+
+                    datasets: []
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        legend: {
+                            display: false
+                        }
+
+                    },
+
+                    scales: {
+
+                        x: {
+
+                            title: {
+                                display: true,
+                                text: "Volume, V (L)"
+                            }
+
+                        },
+
+                        y: {
+
+                            title: {
+                                display: true,
+                                text: "Pressure"
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+}
+
+
+function drawPVChart(r) {
+
+    const ctx =
+        document
+            .getElementById("pvChart")
+            .getContext("2d");
+
+
+    if (pvChart) {
+
+        pvChart.destroy();
+
+    }
+
+
+    const v1 =
+        r.v1 * 1000;
+
+
+    const v2 =
+        r.v2 * 1000;
+
+
+    const p1 =
+        paToPressure(
+            r.p1,
+            r.pressureUnit
+        );
+
+
+    const p2 =
+        paToPressure(
+            r.p2,
+            r.pressureUnit
+        );
+
+
+    const points = [];
+
+
+    const numberOfPoints = 100;
+
+
+    /*
+        Generate only between State 1 and State 2.
+        This prevents the curve from extending outside
+        the actual thermodynamic path.
+    */
+
+    for (
+        let i = 0;
+        i <= numberOfPoints;
+        i++
+    ) {
+
+        const fraction =
+            i / numberOfPoints;
+
+
+        const V =
+            v1 +
+            (v2 - v1) *
+            fraction;
+
+
+        const V_m3 =
+            V / 1000;
+
+
+        let P;
+
+
+        if (selectedProcess === "isochoric") {
+
+            P =
+                paToPressure(
+                    r.p1 +
+                    fraction *
+                    (r.p2 - r.p1),
+                    r.pressureUnit
+                );
+
+        }
+
+
+        else if (selectedProcess === "isobaric") {
+
+            P = p1;
+
+        }
+
+
+        else if (selectedProcess === "isothermal") {
+
+            P =
+                paToPressure(
+                    r.n *
+                    R *
+                    r.t1 /
+                    V_m3,
+                    r.pressureUnit
+                );
+
+        }
+
+
+        else {
+
+            const gamma =
+                r.gamma;
+
+
+            const pressurePa =
+                r.p1 *
+                Math.pow(
+                    r.v1 / V_m3,
+                    gamma
+                );
+
+
+            P =
+                paToPressure(
+                    pressurePa,
+                    r.pressureUnit
+                );
+
+        }
+
+
+        points.push({
+
+            x: V,
+
+            y: P
+
+        });
+
+    }
+
+
+    /*
+        Work area.
+
+        The polygon goes from State 1 along the process
+        to State 2 and then returns to the volume axis.
+
+        This is the geometric work area.
+    */
+
+    const workArea = [
+
+        ...points,
+
+        {
+            x: v2,
+            y: 0
+        },
+
+        {
+            x: v1,
+            y: 0
+        }
+
+    ];
+
+
+    /*
+        Direction arrow near the middle of the path.
+    */
+
+    const middleIndex =
+        Math.floor(
+            points.length / 2
+        );
+
+
+    const arrowPoint =
+        points[middleIndex];
+
+
+    let nextIndex;
+
+
+    if (v2 >= v1) {
+
+        nextIndex =
+            Math.min(
+                middleIndex + 3,
+                points.length - 1
+            );
+
+    }
+
+    else {
+
+        nextIndex =
+            Math.max(
+                middleIndex - 3,
+                0
+            );
+
+    }
+
+
+    const arrowNext =
+        points[nextIndex];
+
+
+    /*
+        Create chart.
+    */
+
+    pvChart =
+        new Chart(
+
+            ctx,
+
+            {
+
+                type: "line",
+
+                data: {
+
+                    datasets: [
+
+                        /* WORK AREA */
+
+                        {
+
+                            label: "Work Area",
+
+                            data: workArea,
+
+                            parsing: false,
+
+                            borderWidth: 0,
+
+                            backgroundColor:
+                                "rgba(52, 152, 219, 0.25)",
+
+                            fill: true,
+
+                            pointRadius: 0,
+
+                            order: 3
+
+                        },
+
+
+                        /* PROCESS PATH */
+
+                        {
+
+                            label: "Process Path",
+
+                            data: points,
+
+                            parsing: false,
+
+                            borderColor:
+                                "rgb(31, 78, 121)",
+
+                            backgroundColor:
+                                "rgb(31, 78, 121)",
+
+                            borderWidth: 4,
+
+                            pointRadius: 0,
+
+                            tension: 0,
+
+                            fill: false,
+
+                            order: 2
+
+                        },
+
+
+                        /* STATE POINTS */
+
+                        {
+
+                            label: "States",
+
+                            data: [
+
+                                {
+                                    x: v1,
+                                    y: p1
+                                },
+
+                                {
+                                    x: v2,
+                                    y: p2
+                                }
+
+                            ],
+
+                            parsing: false,
+
+                            showLine: false,
+
+                            pointRadius: 7,
+
+                            pointHoverRadius: 9,
+
+                            backgroundColor:
+                                "rgb(192, 57, 43)",
+
+                            borderColor:
+                                "rgb(192, 57, 43)",
+
+                            order: 1
+
+                        },
+
+
+                        /* DIRECTION ARROW */
+
+                        {
+
+                            label: "Direction",
+
+                            data: [
+
+                                {
+                                    x: arrowPoint.x,
+                                    y: arrowPoint.y
+                                },
+
+                                {
+                                    x: arrowNext.x,
+                                    y: arrowNext.y
+                                }
+
+                            ],
+
+                            parsing: false,
+
+                            borderColor:
+                                "rgb(39, 174, 96)",
+
+                            backgroundColor:
+                                "rgb(39, 174, 96)",
+
+                            borderWidth: 4,
+
+                            pointRadius: 5,
+
+                            showLine: true,
+
+                            order: 0
+
+                        }
+
+                    ]
+
+                },
+
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    interaction: {
+
+                        intersect: false,
+
+                        mode: "nearest"
+
+                    },
+
+
+                    plugins: {
+
+                        legend: {
+
+                            display: true,
+
+                            position: "bottom"
+
+                        },
+
+
+                        tooltip: {
+
+                            callbacks: {
+
+                                label: function(context) {
+
+                                    return (
+                                        `V = ${formatNumber(context.parsed.x)} L, ` +
+                                        `P = ${formatNumber(context.parsed.y)} ${r.pressureUnit}`
+                                    );
+
+                                }
+
+                            }
+
+                        }
+
+                    },
+
+
+                    scales: {
+
+                        x: {
+
+                            type: "linear",
+
+                            title: {
+
+                                display: true,
+
+                                text: "Volume, V (L)"
+
+                            },
+
+                            grid: {
+
+                                display: true
+
+                            }
+
+                        },
+
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            title: {
+
+                                display: true,
+
+                                text:
+                                    `Pressure, P (${r.pressureUnit})`
+
+                            },
+
+                            grid: {
+
+                                display: true
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        );
+
+}
+
+
+/* =========================================================
+   STEP-BY-STEP SOLUTION
+========================================================= */
+
+function generateSolution(r) {
+
+    const energyUnit =
+        document.getElementById("energyUnit").value;
+
+
+    let html = "";
+
+
+    const p1Display =
+        formatNumber(
+            paToPressure(
+                r.p1,
+                r.pressureUnit
+            )
+        );
+
+
+    const p2Display =
+        formatNumber(
+            paToPressure(
+                r.p2,
+                r.pressureUnit
+            )
+        );
+
+
+    const v1Display =
+        formatNumber(
+            r.v1 * 1000
+        );
+
+
+    const v2Display =
+        formatNumber(
+            r.v2 * 1000
+        );
+
+
+    const t1Display =
+        formatNumber(
+            kToTemperature(
+                r.t1,
+                r.temperatureUnit
+            )
+        );
+
+
+    const t2Display =
+        formatNumber(
+            kToTemperature(
+                r.t2,
+                r.temperatureUnit
+            )
+        );
+
+
+    /* =====================================================
+       ISOCHORIC
+    ===================================================== */
+
+    if (selectedProcess === "isochoric") {
+
+        html = `
+
+        <div class="solution-step">
+
+            <h3>Step 1: Process Condition</h3>
+
+            <p>
+                For an isochoric process:
+            </p>
+
+            <div class="equation">
+                V₁ = V₂
+            </div>
+
+            <p>
+                Therefore:
+                V₁ = V₂ = ${v1Display} L
+            </p>
+
+        </div>
+
+
+        <div class="solution-step">
+
+            <h3>Step 2: Work</h3>
+
+            <div class="equation">
+                W = 0
+            </div>
+
+        </div>
+
+
+        <div class="solution-step">
+
+            <h3>Step 3: Change in Internal Energy</h3>
+
+            <div class="equation">
+                ΔU = nCᵥ(T₂ − T₁)
+            </div>
+
+            <p>
+                ΔU =
+                (${r.n})(${r.cv})
+                (${t2Display} − ${t1Display})
+            </p>
+
+            <p>
+                ΔU = ${formatEnergy(r.dU, energyUnit)}
+            </p>
+
+        </div>
+
+
+        <div class="solution-step">
+
+            <h3>Step 4: Heat Transfer</h3>
+
+            <div class="equation">
+                Q = ΔU + W
+            </div>
+
+            <p>
+                Q = ${formatEnergy(r.Q, energyUnit)}
+            </p>
+
+        </div>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       ISOBARIC
+    ===================================================== */
+
+    else if (selectedProcess === "isobaric") {
+
+        html = `
+
+        <div class="solution-step">
+
+            <h3>Step 1: Process Condition</h3>
+
+            <div class="equation">
+                P₁ = P₂
+            </div>
+
+            <p>
+                P₁ = P₂ = ${p1Display} ${r.pressureUnit}
+            </p>
+
+        </div>
+
+
+        <div class="solution-step">
+
+            <h3>Step 2: Boundary Work</h3>
+
+            <div class="equation">
+                W = P(V₂ − V₁)
+            </div>
+
+            <p>
+                W =
+                ${p1Display} ${r.pressureUnit}
+                ×
+                (${v2Display} − ${v1Display}) L
+            </p>
+
+            <p>
+                W = ${formatEnergy(r.W, energyUnit)}
+            </p>
+
+        </div>
+
+
+        <div class="solution-step">
+
+            <h3>Step 3: Internal Energy</h3>
+
+            <div class="equation">
+                ΔU = nCᵥ(T₂ − T₁)
+            </div>
+
+            <p>
+                ΔU = ${formatEnergy(r.dU, energyUnit)}
+            </p>
+
+        </div>
+
+
+        <div class="solution-step">
+
+            <h3>Step 4: Heat Transfer</h3>
+
+            <div class="equation">
+                Q = ΔU + W
+            </div>
+
+            <p>
+                Q = ${formatEnergy(r.Q, energyUnit)}
+            </p>
+
+        </div>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       ISOTHERMAL
+    ===================================================== */
+
+    else if (selectedProcess === "isothermal") {
+
+        html = `
+
+        <div class="solution-step">
+
+            <h3>Step 1: Process Condition</h3>
+
+            <div class="equation">
+                T₁ = T₂
+            </div>
+
+            <p>
+                T₁ = T₂ = ${t1Display} ${r.temperatureUnit}
+            </p>
+
+        </div>
+
+
+        <div class="solution-step">
+
+            <h3>Step 2: Ideal Gas Relation</h3>
+
+            <div class="equation">
+                P₁V₁ = P₂V₂
+            </div>
+
+            <p>
+                V₂ = P₁V₁/P₂
+            </p>
+
+            <p>
+                V₂ = ${v2Display} L
+            </p>
+
+        </div>
+
+
+        <div class="solution-step">
+
+            <h3>Step 3: Work</h3>
+
+            <div class="equation">
+                W = nRT ln(V₂/V₁)
+            </div>
+
+            <p>
+                W =
+                (${r.n})(${R})(${r.t1})
+                ln(${v2Display}/${v1Display})
+            </p>
+
+            <p>
+                <strong>
+                    W = ${formatEnergy(r.W, energyUnit)}
+                </strong>
+            </p>
+
+            <p>
+                ${
+                    r.W > 0
+                    ? "Since V₂ > V₁, the gas expands and W is positive."
+                    : r.W < 0
+                        ? "Since V₂ < V₁, the gas is compressed and W is negative."
+                        : "Since V₂ = V₁, W = 0."
+                }
+            </p>
+
+        </div>
+
+
+        <div class="solution-step">
+
+            <h3>Step 4: Internal Energy</h3>
+
+            <div class="equation">
+                ΔU = 0
+            </div>
+
+            <p>
+                For an ideal gas, internal energy depends only on temperature,
+                and temperature remains constant.
+            </p>
+
+        </div>
+
+
+        <div class="solution-step">
+
+            <h3>Step 5: Heat Transfer</h3>
+
+            <div class="equation">
+                Q = W
+            </div>
+
+            <p>
+                Q = ${formatEnergy(r.Q, energyUnit)}
+            </p>
+
+        </div>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       ADIABATIC
+    ===================================================== */
+
+    else if (selectedProcess === "adiabatic") {
+
+        html = `
+
+        <div class="solution-step">
+
+            <h3>Step 1: Process Condition</h3>
+
+            <div class="equation">
+                Q = 0
+            </div>
+
+            <p>
+                For a reversible adiabatic process:
+            </p>
+
+            <div class="equation">
+                PVᵞ = constant
+            </div>
+
+            <p>
+                γ = Cₚ/Cᵥ =
+                ${formatNumber(r.gamma)}
+            </p>
+
+        </div>
+
+
+        <div class="solution-step">
+
+            <h3>Step 2: Final Temperature</h3>
+
+            <div class="equation">
+                T₂ =
+                T₁(P₂/P₁)<sup>(γ−1)/γ</sup>
+            </div>
+
+            <p>
+                T₂ = ${t2Display} ${r.temperatureUnit}
+            </p>
+
+        </div>
+
+
+        <div class="solution-step">
+
+            <h3>Step 3: Change in Internal Energy</h3>
+
+            <div class="equation">
+                ΔU = nCᵥ(T₂ − T₁)
+            </div>
+
+            <p>
+                ΔU = ${formatEnergy(r.dU, energyUnit)}
+            </p>
+
+        </div>
+
+
+        <div class="solution-step">
+
+            <h3>Step 4: Work</h3>
+
+            <div class="equation">
+                W = −ΔU
+            </div>
+
+            <p>
+                W = ${formatEnergy(r.W, energyUnit)}
+            </p>
+
+        </div>
+
+
+        <div class="solution-step">
+
+            <h3>Step 5: Heat Transfer</h3>
+
+            <div class="equation">
+                Q = 0
+            </div>
+
+        </div>
+
+        `;
+
+    }
+
+
+    document.getElementById("solution")
+        .innerHTML = html;
+
+}
+
+
+/* =========================================================
+   UPDATE UNITS WHEN UNIT SELECTORS CHANGE
+========================================================= */
+
+document
+    .getElementById("pressureUnit")
+    .addEventListener(
+        "change",
+        function() {
+
+            if (
+                document.getElementById(
+                    "finalVariable"
+                ).value === "P2"
+            ) {
+
+                document.getElementById(
+                    "finalUnit"
+                ).textContent = this.value;
+
+            }
+
+        }
+    );
+
+
+document
+    .getElementById("temperatureUnit")
+    .addEventListener(
+        "change",
+        function() {
+
+            if (
+                document.getElementById(
+                    "finalVariable"
+                ).value === "T2"
+            ) {
+
+                document.getElementById(
+                    "finalUnit"
+                ).textContent = this.value;
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        updateProcessDescription();
+
+        updateFinalOptions();
+
+        drawEmptyChart();
+
+    }
+);
+
+</script>
+
+</body>
+</html>
