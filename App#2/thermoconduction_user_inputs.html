@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ThermoConduction | Chemical Engineering Heat Transfer</title>
+<style>
+:root{--navy:#142b3b;--teal:#147d78;--mint:#e8f4f1;--gold:#e7ad55;--ink:#20313b;--muted:#667780;--paper:#f4f7f6;--line:#dce5e2;--white:#fff;--red:#b64b43}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 Inter,system-ui,-apple-system,Segoe UI,Arial}
+header{background:var(--navy);color:#fff;padding:25px 18px 22px}.wrap{max-width:1120px;margin:auto;padding:0 18px}
+.brand{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#b7d6d1;font-weight:800}
+h1{font-size:clamp(27px,4vw,40px);line-height:1.1;margin:8px 0}header p{margin:8px 0 0;color:#d2e0e3;max-width:760px}
+main{padding:24px 0 45px}.nav{display:flex;gap:8px;overflow-x:auto;padding:3px 0 15px;margin-bottom:4px}
+.nav button{white-space:nowrap;background:#e8eeec;color:#36515a;border:1px solid var(--line);padding:10px 14px;border-radius:30px;font-weight:750}
+.nav button.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+.page{display:none}.page.active{display:block}.grid{display:grid;grid-template-columns:1fr 1fr;gap:17px;align-items:start}
+.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:19px;box-shadow:0 5px 20px #18353a08}
+h2{font-size:18px;margin:0 0 4px;color:var(--navy)}h3{font-size:15px;margin:16px 0 6px;color:var(--navy)}
+.sub{font-size:13px;color:var(--muted);margin:0 0 15px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{display:block;font-size:13px;font-weight:750;margin-bottom:5px;color:#344b55}
+input,select{width:100%;padding:10px 11px;border:1px solid #cbd8d5;border-radius:9px;background:#fff;color:var(--ink);font:inherit}
+input:focus,select:focus{outline:2px solid #147d7828;border-color:var(--teal)}.hint,.note{font-size:11px;color:var(--muted);margin-top:4px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}button{cursor:pointer;font:inherit}
+.btn{border:0;border-radius:9px;padding:10px 14px;font-size:13px;font-weight:800}.primary{background:var(--teal);color:white}.secondary{background:#edf2f1;color:#29424b}
+.error{font-size:12px;color:var(--red);min-height:18px;margin-top:8px}
+.metric{background:var(--mint);padding:15px;border-radius:11px;margin:13px 0}.metric small{display:block;color:#376c68;font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:800}
+.big{font-size:32px;line-height:1.3;color:#125f5a;font-weight:850}.unit{font-size:13px;color:#376c68;font-weight:700}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}.stat{border:1px solid var(--line);border-radius:9px;padding:10px}.stat small{display:block;color:var(--muted);font-size:11px}.stat b{color:var(--navy);font-size:15px}
+.formula{background:#f3f7f6;padding:13px;border-radius:10px;margin-top:12px}.eq{font:21px Georgia,serif;text-align:center;color:var(--navy);padding:5px}
+.diagram{border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:13px}.wall{display:flex;min-height:90px}.side{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;font-size:12px;padding:6px}.hot{background:#fff0e6;color:#a84d27;border-radius:8px 0 0 8px}.cold{background:#e9f3fb;color:#28618b;border-radius:0 8px 8px 0}.slab{width:25%;background:repeating-linear-gradient(135deg,#b6c7c4,#b6c7c4 7px,#d5e0dd 7px,#d5e0dd 14px);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#23433e;border-left:2px solid #829994;border-right:2px solid #829994;writing-mode:vertical-rl}
+.arrow{text-align:center;color:var(--teal);font-weight:800;font-size:12px;margin-top:7px}
+ol.steps{padding-left:20px;font-size:13px;margin:8px 0}ol.steps li{margin:6px 0}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}th,td{text-align:left;padding:9px 7px;border-bottom:1px solid var(--line)}th{color:#53666e;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.callout{background:#fff8ec;border-left:3px solid var(--gold);padding:11px;border-radius:7px;font-size:13px;margin-top:12px}
+.full{margin-top:17px}.chip{display:inline-block;background:#e8f4f1;color:#176c67;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800}
+.quiz-q{font-weight:750;margin:14px 0 8px}.choice{display:block;border:1px solid var(--line);border-radius:9px;padding:9px 11px;margin:7px 0;font-size:13px;cursor:pointer}.choice input{width:auto;margin-right:7px}.feedback{font-size:13px;margin-top:9px;font-weight:700}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:20px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.card{padding:15px}.wrap{padding:0 13px}}
+@media(max-width:390px){.fields{grid-template-columns:1fr}.big{font-size:28px}}
+</style></head>
+<body>
+<header><div class="wrap"><div class="brand">Chemical Engineering · Heat &amp; Mass Transfer</div><h1>ThermoConduction</h1><p>An interactive learning and calculation tool for one-dimensional heat conduction using Fourier's Law. Explore materials, composite walls, temperature-dependent conductivity, and engineering applications.</p></div></header>
+<main class="wrap">
+<nav class="nav" aria-label="App sections">
+<button class="active" data-page="calculator">1D Calculator</button><button data-page="materials">Material Comparison</button><button data-page="series">Multilayer Wall</button><button data-page="variable">Variable k</button><button data-page="applications">Engineering Applications</button><button data-page="fluid">Fluid Properties</button><button data-page="learn">Learn &amp; Practice</button>
+</nav>
+
+<section class="page active" id="calculator">
+<div class="grid">
+<div class="card"><h2>Plane-wall calculator</h2><p class="sub">Steady-state, one-dimensional conduction with constant thermal conductivity and area.</p>
+<div class="fields">
+<div><label for="k">Thermal conductivity, k</label><input id="k" type="number" min="0" step="any" placeholder="Enter k"><div class="hint">W/(m·K) · enter the value for your material and temperature</div></div>
+<div><label for="area">Heat-transfer area, A</label><input id="area" type="number" min="0" step="any" placeholder="Enter area"><div class="hint">m² · area perpendicular to heat flow</div></div>
+<div><label for="thick">Wall thickness, Δx</label><input id="thick" type="number" min="0" step="any" placeholder="Enter thickness"><div class="hint">m</div></div>
+<div><label for="hot">Boundary temperature T₁</label><input id="hot" type="number" step="any" placeholder="Enter T₁"><div class="hint">°C</div></div>
+<div><label for="cold">Boundary temperature T₂</label><input id="cold" type="number" step="any" placeholder="Enter T₂"><div class="hint">°C</div></div>
+<div><label for="materialName">Material / substance name</label><input id="materialName" type="text" placeholder="Optional name"></div>
+</div><div class="actions"><button class="btn primary" id="calcBtn">Calculate</button><button class="btn secondary" id="resetBtn">Clear inputs</button></div>
+<div class="callout">No sample values are preloaded. Enter measured or sourced properties and dimensions. The calculator will not substitute missing values.</div><div class="error" id="calcError"></div></div>
+<div class="card" aria-live="polite"><h2>Results</h2><p class="sub">Heat-transfer rate and supporting quantities.</p>
+<div class="metric"><small>Rate of heat transfer, |Q̇|</small><div class="big" id="q">—</div><div class="unit">W</div></div>
+<div class="stats"><div class="stat"><small>Heat flux, |q″|</small><b id="flux">—</b></div><div class="stat"><small>Thermal resistance</small><b id="res">—</b></div><div class="stat"><small>Temperature difference</small><b id="dt">—</b></div><div class="stat"><small>Temperature gradient</small><b id="grad">—</b></div></div>
+<div class="callout" id="direction">Heat flows from the hotter side to the colder side.</div>
+<div class="formula"><div class="chip">Equation</div><div class="eq">Q̇ = kA (T₁ − T₂) / Δx</div><div class="note">The signed form is Q̇x = −kA(dT/dx). The displayed magnitude is positive; direction is described separately.</div></div>
+<div class="diagram"><b style="font-size:12px;color:#667780">ONE-DIMENSIONAL HEAT FLOW</b><div class="wall" style="margin-top:8px"><div class="side hot"><b>HOT</b><span id="hotText">—</span></div><div class="slab">WALL</div><div class="side cold"><b>COLD</b><span id="coldText">—</span></div></div><div class="arrow">Heat flow: hot → cold &nbsp; ⟶</div></div></div>
+</div>
+<div class="card full"><h2>Step-by-step solution</h2><p class="sub">The app follows the Given–Required–Solution approach.</p><ol class="steps" id="calcSteps"></ol></div>
+</section>
+
+<section class="page" id="materials">
+<div class="grid"><div class="card"><h2>Compare materials</h2><p class="sub">Compare up to three materials using only the thermal-conductivity values you enter, with common user-specified geometry and temperatures.</p>
+<div class="fields"><div><label for="mArea">Area, A (m²)</label><input id="mArea" type="number" placeholder="Enter area" min=".000001" step="any"></div><div><label for="mThick">Thickness (m)</label><input id="mThick" type="number" placeholder="Enter thickness" min=".000001" step="any"></div><div><label for="mT1">Hot-side T₁ (°C)</label><input id="mT1" type="number" placeholder="Enter T₁"></div><div><label for="mT2">Cold-side T₂ (°C)</label><input id="mT2" type="number" placeholder="Enter T₂"></div></div>
+<h3>User-defined materials</h3><p class="hint">Enter the name and thermal conductivity from your own property source. No preset material values are used.</p>
+<div class="fields">
+<div><label for="mat1name">Material 1 name</label><input id="mat1name" placeholder="Name"></div><div><label for="mat1k">Material 1 k (W/m·K)</label><input id="mat1k" type="number" min=".000001" step="any" placeholder="Enter k"></div>
+<div><label for="mat2name">Material 2 name</label><input id="mat2name" placeholder="Name"></div><div><label for="mat2k">Material 2 k (W/m·K)</label><input id="mat2k" type="number" min=".000001" step="any" placeholder="Enter k"></div>
+<div><label for="mat3name">Material 3 name</label><input id="mat3name" placeholder="Name"></div><div><label for="mat3k">Material 3 k (W/m·K)</label><input id="mat3k" type="number" min=".000001" step="any" placeholder="Enter k"></div>
+</div>
+<div class="actions"><button class="btn primary" id="compareBtn">Compare materials</button></div><div class="error" id="mError"></div></div>
+<div class="card"><h2>Comparison results</h2><p class="sub">The comparison is valid only for the same geometry and boundary temperatures entered above.</p><div id="materialTable"></div><div class="callout" id="materialInsight">Change the inputs and compare again.</div></div></div>
+<div class="card full"><h2>How to interpret</h2><p>For a plane wall, Q̇ is directly proportional to thermal conductivity. A materialerial with a higher k transfers more heat when area, thickness, and temperature difference are held constant. This comparison isolates the effect of k; real equipment selection also considers strength, safety, cost, moisture, temperature limits, and chemical compatibility.</p></div>
+</section>
+
+<section class="page" id="series">
+<div class="grid"><div class="card"><h2>Composite / multilayer wall</h2><p class="sub">Model conduction through up to four plane-wall layers arranged in series. The same heat-transfer rate passes through every layer at steady state.</p>
+<div class="fields"><div><label for="sArea">Common area, A (m²)</label><input id="sArea" type="number" min=".000001" step="any" placeholder="Enter area"></div><div><label for="sHot">Hot-side T₁ (°C)</label><input id="sHot" type="number" placeholder="Enter T₁"></div><div><label for="sCold">Cold-side T₂ (°C)</label><input id="sCold" type="number" placeholder="Enter T₂"></div><div><label for="layerCount">Number of layers</label><select id="layerCount"><option value="">Select layers</option><option>2</option><option>3</option><option>4</option></select></div></div>
+<div id="layers"></div><div class="actions"><button class="btn primary" id="seriesBtn">Calculate composite wall</button></div><div class="error" id="sError"></div></div>
+<div class="card"><h2>Series-wall results</h2><div class="metric"><small>Total heat-transfer rate, |Q̇|</small><div class="big" id="sQ">—</div><div class="unit">W</div></div><div class="stats"><div class="stat"><small>Total resistance</small><b id="sR">—</b></div><div class="stat"><small>Overall ΔT</small><b id="sDT">—</b></div></div><div id="interfaceResults" class="note" style="margin-top:12px">Calculate to see the temperature at each layer interface.</div><div class="formula"><div class="eq">Q̇ = (T₁ − Tₙ₊₁) / Σ[Lᵢ/(kᵢA)]</div><div class="note">Assumes perfect contact between layers, no contact resistance, no heat generation, and steady one-dimensional conduction.</div></div></div></div></section>
+
+<section class="page" id="variable">
+<div class="grid"><div class="card"><h2>Temperature-dependent conductivity</h2><p class="sub">Use the module's average-k method when conductivity varies linearly with temperature: k(T) = C₁ + C₂T.</p>
+<div class="fields"><div><label for="c1">C₁ in k(T) = C₁ + C₂T</label><input id="c1" type="number" step="any" placeholder="Enter C₁"></div><div><label for="c2">C₂ in k(T) = C₁ + C₂T</label><input id="c2" type="number" step="any" placeholder="Enter C₂"></div><div><label for="vArea">Area, A (m²)</label><input id="vArea" type="number" min=".000001" step="any" placeholder="Enter area"></div><div><label for="vDx">Thickness, Δx (m)</label><input id="vDx" type="number" min=".000001" step="any" placeholder="Enter thickness"></div><div><label for="vT1">T₁ (°C)</label><input id="vT1" type="number" placeholder="Enter T₁"></div><div><label for="vT2">T₂ (°C)</label><input id="vT2" type="number" placeholder="Enter T₂"></div></div>
+<div class="actions"><button class="btn primary" id="variableBtn">Calculate using average k</button></div><div class="error" id="vError"></div></div>
+<div class="card"><h2>Variable-k results</h2><div class="metric"><small>Rate of heat transfer, |Q̇|</small><div class="big" id="vQ">—</div><div class="unit">W</div></div><div class="stats"><div class="stat"><small>k at T₁</small><b id="vk1">—</b></div><div class="stat"><small>k at T₂</small><b id="vk2">—</b></div><div class="stat"><small>Average k</small><b id="vkavg">—</b></div><div class="stat"><small>Thermal resistance</small><b id="vR">—</b></div></div><div class="formula"><div class="eq">k<sub>avg</sub> = (k₁ + k₂)/2</div><div class="eq">|Q̇| = k<sub>avg</sub>A|T₁ − T₂|/Δx</div></div><div class="callout">Important: this arithmetic-average method is exact for a linear k(T) relationship, as described in your module. Do not assume it applies to every nonlinear conductivity function.</div></div></div></section>
+
+<section class="page" id="applications">
+<div class="grid"><div class="card"><h2>Insulated process wall simulator</h2><p class="sub">A simplified chemical-engineering example: heat loss through a flat insulated wall of a heated process vessel or equipment enclosure.</p>
+<div class="fields"><div><label for="appTemp">Process-side wall T (°C)</label><input id="appTemp" type="number" placeholder="Enter temperature"></div><div><label for="appAmbient">Outer-side wall T (°C)</label><input id="appAmbient" type="number" placeholder="Enter temperature"></div><div><label for="appArea">Wall area (m²)</label><input id="appArea" type="number" min=".0001" step="any" placeholder="Enter area"></div><div><label for="appK">Wall / insulation k (W/m·K)</label><input id="appK" type="number" min=".000001" step="any" placeholder="Enter k"></div><div><label for="appThick">Wall / insulation thickness (mm)</label><input id="appThick" type="number" min=".1" step="any" placeholder="Enter thickness"></div></div>
+<div class="actions"><button class="btn primary" id="appBtn">Estimate conductive heat loss</button></div><div class="error" id="appError"></div></div>
+<div class="card"><h2>Application estimate</h2><div class="metric"><small>Conductive heat-transfer rate</small><div class="big" id="appQ">—</div><div class="unit">W</div></div><div class="stats"><div class="stat"><small>Heat flux</small><b id="appFlux">—</b></div><div class="stat"><small>Resistance</small><b id="appR">—</b></div></div><div class="callout" id="appText">This is a conduction-only estimate across the insulation layer.</div></div></div>
+<div class="card full"><h2>Why this matters in Chemical Engineering</h2><ul><li><b>Energy efficiency:</b> estimating heat loss helps evaluate insulation requirements for heated process equipment.</li><li><b>Process temperature control:</b> heat transfer through walls affects how much energy is needed to maintain operating temperatures.</li><li><b>Material selection:</b> conductivity and thickness influence the thermal resistance of an equipment wall.</li><li><b>Design limitation:</b> actual vessels are often cylindrical and may involve convection, radiation, multiple layers, supports, and changing material properties. This plane-wall calculator is an educational approximation, not a complete equipment design method.</li></ul></div></section>
+
+
+<section class="page" id="fluid">
+<div class="grid">
+<div class="card"><h2>User-entered fluid properties</h2><p class="sub">Enter the properties of air, water, or another fluid at the temperature and pressure relevant to your problem. The app does not select property values for you.</p>
+<div class="fields">
+<div><label for="rho">Density, ρ (kg/m³)</label><input id="rho" type="number" min=".000001" step="any" placeholder="Enter density"></div>
+<div><label for="mu">Dynamic viscosity, μ (Pa·s)</label><input id="mu" type="number" min=".000000001" step="any" placeholder="Enter viscosity"></div>
+<div><label for="cp">Specific heat, Cₚ (J/kg·K)</label><input id="cp" type="number" min=".000001" step="any" placeholder="Enter specific heat"></div>
+<div><label for="fk">Thermal conductivity, k (W/m·K)</label><input id="fk" type="number" min=".000001" step="any" placeholder="Enter conductivity"></div>
+<div><label for="vel">Mean fluid velocity, V (m/s)</label><input id="vel" type="number" min="0" step="any" placeholder="Enter velocity"></div>
+<div><label for="diam">Characteristic / hydraulic diameter, D (m)</label><input id="diam" type="number" min=".000001" step="any" placeholder="Enter diameter"></div>
+</div>
+<div class="actions"><button class="btn primary" id="fluidBtn">Calculate fluid quantities</button><button class="btn secondary" id="fluidClear">Clear inputs</button></div>
+<div class="error" id="fluidError"></div>
+<div class="callout">These inputs are not part of Fourier's pure-conduction equation. They are used here to calculate fluid-flow and thermal-property quantities that may be needed when studying convection or combined heat transfer.</div>
+</div>
+<div class="card"><h2>Calculated fluid quantities</h2><p class="sub">Results are calculated only from the values entered on the left.</p>
+<div class="stats">
+<div class="stat"><small>Reynolds number, Re</small><b id="fRe">—</b></div>
+<div class="stat"><small>Prandtl number, Pr</small><b id="fPr">—</b></div>
+<div class="stat"><small>Thermal diffusivity, α (m²/s)</small><b id="fAlpha">—</b></div>
+<div class="stat"><small>Kinematic viscosity, ν (m²/s)</small><b id="fNu">—</b></div>
+</div>
+<div class="formula"><div class="eq">Re = ρVD/μ</div><div class="eq">Pr = μCₚ/k</div><div class="eq">α = k/(ρCₚ)</div><div class="eq">ν = μ/ρ</div></div>
+<p class="note">Reynolds number requires a representative velocity and characteristic or hydraulic diameter. These results do not calculate a convection coefficient; selecting a Nusselt-number correlation requires the geometry, flow regime, and applicable boundary conditions.</p>
+</div>
+</div>
+</section>
+
+<section class="page" id="learn">
+<div class="grid"><div class="card"><h2>Concept guide</h2><p class="sub">Core ideas from the ChE 122 module.</p>
+<h3>1. What is conduction?</h3><p>Conduction is energy transfer through contact between adjacent molecules. In metals, free electrons also contribute to energy transfer.</p>
+<h3>2. What does Fourier's law tell us?</h3><p>Heat flux is proportional to the negative temperature gradient. In one dimension, heat-transfer rate also depends on the area perpendicular to the direction of heat flow.</p>
+<div class="formula"><div class="eq">q″<sub>x</sub> = −k(dT/dx)</div><div class="eq">Q̇<sub>x</sub> = −kA(dT/dx)</div></div>
+<h3>3. Thermal resistance</h3><p>For a plane wall with constant k and A:</p><div class="eq">R = Δx/(kA) &nbsp; and &nbsp; Q̇ = ΔT/R</div>
+<h3>4. Assumptions in this app</h3><p>Unless stated otherwise, the plane-wall model assumes steady state, one-dimensional heat flow, constant area, no internal heat generation, and perfect material contact.</p></div>
+<div class="card"><h2>Knowledge check</h2><p class="sub">Choose an answer, then check your understanding.</p>
+<div class="quiz-q">1. In Fourier's law, why is there a negative sign?</div>
+<label class="choice"><input type="radio" name="q1" value="a"> It means heat flows from lower to higher temperature.</label><label class="choice"><input type="radio" name="q1" value="b"> It indicates heat flows in the direction of decreasing temperature.</label><label class="choice"><input type="radio" name="q1" value="c"> It means thermal conductivity is negative.</label>
+<div class="quiz-q">2. If wall thickness increases while all other variables remain constant, what happens to heat-transfer rate?</div>
+<label class="choice"><input type="radio" name="q2" value="a"> It increases.</label><label class="choice"><input type="radio" name="q2" value="b"> It remains unchanged.</label><label class="choice"><input type="radio" name="q2" value="c"> It decreases.</label>
+<div class="quiz-q">3. For layers in series at steady state, which quantity is the same through every layer?</div>
+<label class="choice"><input type="radio" name="q3" value="a"> Heat-transfer rate.</label><label class="choice"><input type="radio" name="q3" value="b"> Temperature drop.</label><label class="choice"><input type="radio" name="q3" value="c"> Thermal conductivity.</label>
+<div class="actions"><button class="btn primary" id="quizBtn">Check answers</button><button class="btn secondary" id="quizReset">Clear</button></div><div class="feedback" id="quizFeedback"></div></div></div>
+<div class="card full"><h2>Reference</h2><p class="note">Primary course reference: user-provided ChE 122 – Heat and Mass Transfer module, sections on Fourier's Law of Heat Conduction, one-dimensional conduction, varying thermal conductivity, plane walls in series, thermal resistance, and heat-transfer applications. This revised version does not preload material-property values. Users must obtain and enter property data from an appropriate source for the relevant temperature and pressure.</p></div>
+</section>
+</main><footer>ThermoConduction · Educational project for Chemical Engineering · SI units</footer>
+<script>
+const $=id=>document.getElementById(id);
+const n=id=>Number($(id).value), f=(x,d=2)=>Number(x).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d});
+function valid(vals){return vals.every(Number.isFinite)}
+function initCalculator(){
+ const ids=['k','area','thick','hot','cold'];const k=n('k'),A=n('area'),dx=n('thick'),t1=n('hot'),t2=n('cold'),e=[];
+ if(ids.some(id=>$(id).value.trim()==='')||!valid([k,A,dx,t1,t2])||k<=0||A<=0||dx<=0)e.push('Complete all required fields. k, area, and thickness must be greater than zero.');
+ if(t1===t2)e.push('The two temperatures must be different.');
+ $('calcError').textContent=e.join(' ');if(e.length)return;
+ const q=k*A*(t1-t2)/dx,R=dx/(k*A),flux=q/A,grad=(t2-t1)/dx;
+ $('q').textContent=f(Math.abs(q));$('flux').textContent=f(Math.abs(flux))+' W/m²';$('res').textContent=f(R,6)+' K/W';$('dt').textContent=f(Math.abs(t1-t2))+' K';$('grad').textContent=(grad<0?'−':'+')+f(Math.abs(grad))+' K/m';
+ $('hotText').textContent=f(t1)+' °C';$('coldText').textContent=f(t2)+' °C';
+ $('direction').textContent=`Heat flows from ${t1>t2?'T₁':'T₂'} (${f(Math.max(t1,t2))} °C) to ${t1>t2?'T₂':'T₁'} (${f(Math.min(t1,t2))} °C). Signed Q̇x = ${f(q)} W under the selected x-direction convention.`;
+ $('calcSteps').innerHTML=`<li><b>Given:</b> k = ${f(k,4)} W/(m·K), A = ${f(A,3)} m², Δx = ${f(dx,4)} m, T₁ = ${f(t1)} °C, T₂ = ${f(t2)} °C.</li><li><b>Required:</b> Rate of heat transfer, Q̇.</li><li><b>Equation:</b> Q̇ = kA(T₁ − T₂)/Δx.</li><li><b>Substitution:</b> Q̇ = (${f(k,4)})(${f(A,3)})[${f(t1)} − (${f(t2)})]/${f(dx,4)}.</li><li><b>Answer:</b> Q̇ = ${f(q)} W. Magnitude = ${f(Math.abs(q))} W.</li>`;
+}
+$('calcBtn').onclick=initCalculator;
+$('resetBtn').onclick=()=>{['k','area','thick','hot','cold','materialName'].forEach(id=>$(id).value='');$('calcError').textContent='';$('q').textContent='—';$('flux').textContent='—';$('res').textContent='—';$('dt').textContent='—';$('grad').textContent='—';$('calcSteps').innerHTML='';$('direction').textContent='Enter values and calculate to display the heat-flow direction.';$('hotText').textContent='—';$('coldText').textContent='—'};
+function compare(){
+ const A=n('mArea'),dx=n('mThick'),t1=n('mT1'),t2=n('mT2'),dt=t1-t2;
+ const mats=[1,2,3].map(i=>[$('mat'+i+'name').value.trim(),n('mat'+i+'k')]).filter(x=>x[0]&&Number.isFinite(x[1])&&x[1]>0);
+ if(!valid([A,dx,t1,t2])||A<=0||dx<=0||dt===0||mats.length<2){$('mError').textContent='Enter valid area, thickness, two different temperatures, and at least two named materials with positive k values.';return}
+ $('mError').textContent='';
+ const rows=mats.map(([name,k])=>({name,k,q:Math.abs(k*A*dt/dx)})).sort((a,b)=>a.q-b.q);
+ $('materialTable').innerHTML='<table><thead><tr><th>Material</th><th>k (W/m·K)</th><th>|Q̇| (W)</th></tr></thead><tbody>'+rows.map(x=>`<tr><td>${x.name}</td><td>${x.k}</td><td><b>${f(x.q)}</b></td></tr>`).join('')+'</tbody></table>';
+ $('materialInsight').textContent=`Under these conditions, ${rows[0].name} gives the lowest heat-transfer rate among the listed examples. This does not automatically make it the best industrial material; service limits and compatibility must also be considered.`;
+}
+$('compareBtn').onclick=compare;
+function buildLayers(){const count=Number($('layerCount').value);$('layers').innerHTML=count?Array.from({length:count},(_,i)=>`<div style="border-top:1px solid var(--line);padding-top:10px;margin-top:10px"><b style="font-size:12px;color:#53666e">LAYER ${i+1}</b><div class="fields"><div><label>Material name</label><input id="lname${i}" placeholder="Enter material name"></div><div><label>Thickness (m)</label><input id="ldx${i}" type="number" min=".000001" step="any" placeholder="Enter thickness"></div><div><label>Conductivity k (W/m·K)</label><input id="lk${i}" type="number" min=".000001" step="any" placeholder="Enter k"></div></div></div>`).join(''):''}
+$('layerCount').onchange=buildLayers;buildLayers();
+function calcSeries(){const count=Number($('layerCount').value),A=n('sArea'),t1=n('sHot'),tn=n('sCold'),err=[];
+if(!count)err.push('Select the number of layers.');
+if(!valid([A,t1,tn])||A<=0||t1===tn)err.push('Enter a positive area and different boundary temperatures.');
+const layers=[];for(let i=0;i<count;i++){const L=n('ldx'+i),k=n('lk'+i),name=$('lname'+i).value||`Layer ${i+1}`;if(!valid([L,k])||L<=0||k<=0)err.push(`Layer ${i+1}: thickness and k must be greater than zero.`);layers.push({L,k,name})}
+$('sError').textContent=err.join(' ');if(err.length)return;
+const resist=layers.map(x=>x.L/(x.k*A)),R=resist.reduce((a,b)=>a+b,0),q=(t1-tn)/R;let temp=t1;const out=[];
+layers.forEach((x,i)=>{const drop=Math.abs(q)*resist[i];temp+=(tn<t1?-drop:drop);out.push(`<li>After ${x.name}: ${f(temp)} °C</li>`)});
+$('sQ').textContent=f(Math.abs(q));$('sR').textContent=f(R,5)+' K/W';$('sDT').textContent=f(Math.abs(t1-tn))+' K';$('interfaceResults').innerHTML='<b>Estimated interface temperatures</b><ol>'+out.join('')+'</ol><span class="note">Interface temperatures are calculated by distributing the total temperature difference according to each layer resistance.</span>';
+}
+$('seriesBtn').onclick=calcSeries;
+function variableCalc(){const c1=n('c1'),c2=n('c2'),A=n('vArea'),dx=n('vDx'),t1=n('vT1'),t2=n('vT2'),k1=c1+c2*t1,k2=c1+c2*t2,ka=(k1+k2)/2,err=[];
+if(!valid([c1,c2,A,dx,t1,t2,k1,k2])||A<=0||dx<=0||t1===t2||k1<=0||k2<=0)err.push('Check inputs: area and thickness must be positive, temperatures different, and k(T) positive at both endpoints.');
+$('vError').textContent=err.join(' ');if(err.length)return;
+const q=ka*A*Math.abs(t1-t2)/dx,R=dx/(ka*A);
+$('vQ').textContent=f(q);$('vk1').textContent=f(k1,5);$('vk2').textContent=f(k2,5);$('vkavg').textContent=f(ka,5)+' W/m·K';$('vR').textContent=f(R,6)+' K/W';
+}
+$('variableBtn').onclick=variableCalc;
+function appCalc(){const hot=n('appTemp'),cold=n('appAmbient'),A=n('appArea'),k=n('appK'),dx=n('appThick')/1000;
+if(!valid([hot,cold,A,k,dx])||hot===cold||A<=0||k<=0||dx<=0){$('appError').textContent='Enter different temperatures and positive area, conductivity, and insulation thickness.';return}
+$('appError').textContent='';const q=k*A*Math.abs(hot-cold)/dx,flux=q/A,R=dx/(k*A);
+$('appQ').textContent=f(q);$('appFlux').textContent=f(flux)+' W/m²';$('appR').textContent=f(R,5)+' K/W';
+$('appText').textContent=`The estimated conductive heat loss is ${f(q)} W for the stated wall area and insulation thickness. Increasing insulation thickness or selecting a lower-conductivity material reduces conduction in this plane-wall model. This estimate excludes surface convection, radiation, thermal bridges, and transient effects.`;
+}
+$('appBtn').onclick=appCalc;
+function fluidCalc(){
+ const ids=['rho','mu','cp','fk','vel','diam'];const vals=ids.map(n);const [rho,mu,cp,k,V,D]=vals;
+ if(ids.some(id=>$(id).value.trim()==='')||!valid(vals)||rho<=0||mu<=0||cp<=0||k<=0||V<0||D<=0){$('fluidError').textContent='Complete all six fields. Density, viscosity, specific heat, conductivity, and diameter must be positive; velocity must be zero or greater.';return}
+ $('fluidError').textContent='';
+ $('fRe').textContent=f(rho*V*D/mu,3);
+ $('fPr').textContent=f(mu*cp/k,4);
+ $('fAlpha').textContent=(k/(rho*cp)).toExponential(4);
+ $('fNu').textContent=(mu/rho).toExponential(4);
+}
+$('fluidBtn').onclick=fluidCalc;
+$('fluidClear').onclick=()=>{['rho','mu','cp','fk','vel','diam'].forEach(id=>$(id).value='');['fRe','fPr','fAlpha','fNu'].forEach(id=>$(id).textContent='—');$('fluidError').textContent=''};
+$('quizBtn').onclick=()=>{const answers={q1:'b',q2:'c',q3:'a'};let score=0,answered=0;for(const [q,a] of Object.entries(answers)){const v=document.querySelector(`input[name="${q}"]:checked`);if(v){answered++;if(v.value===a)score++}}$('quizFeedback').textContent=answered<3?`Please answer all three questions. You answered ${answered} of 3.`:`You scored ${score}/3. ${score===3?'Excellent work!': 'Review the concept guide and try again.'}`;$('quizFeedback').style.color=score===3?'#147d78':'#9a6421'};
+$('quizReset').onclick=()=>{document.querySelectorAll('#learn input[type=radio]').forEach(x=>x.checked=false);$('quizFeedback').textContent=''};
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===b.dataset.page));});
+// No calculations are run automatically: users must enter their own values and press Calculate.
+</script></body></html>
